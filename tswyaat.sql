@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 17 أبريل 2020 الساعة 02:42
+-- Generation Time: 16 يونيو 2020 الساعة 13:38
 -- إصدار الخادم: 10.1.36-MariaDB
 -- PHP Version: 7.2.11
 
@@ -47,22 +47,41 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- بنية الجدول `account`
+--
+
+CREATE TABLE `account` (
+  `acct_num` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- القوادح `account`
+--
+DELIMITER $$
+CREATE TRIGGER `ins_sum` BEFORE INSERT ON `account` FOR EACH ROW SET @sum = @sum + NEW.amount
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- بنية الجدول `migration`
 --
 
 CREATE TABLE `migration` (
   `version` varchar(180) NOT NULL,
   `apply_time` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- إرجاع أو استيراد بيانات الجدول `migration`
 --
 
 INSERT INTO `migration` (`version`, `apply_time`) VALUES
-('m000000_000000_base', 1584861446),
-('m130524_201442_init', 1584861454),
-('m190124_110200_add_verification_token_column_to_user_table', 1584861457);
+('m000000_000000_base', 315610383),
+('m130524_201442_init', 315610388),
+('m190124_110200_add_verification_token_column_to_user_table', 315610388);
 
 -- --------------------------------------------------------
 
@@ -81,7 +100,15 @@ CREATE TABLE `po` (
 --
 
 INSERT INTO `po` (`id`, `po_no`, `note`) VALUES
-(35, '1', '1');
+(4, 'zxc', 'ssa');
+
+--
+-- القوادح `po`
+--
+DELIMITER $$
+CREATE TRIGGER `before_delete` BEFORE DELETE ON `po` FOR EACH ROW DELETE FROM po_iteme WHERE po_iteme.po_id= OLD.id
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -91,19 +118,10 @@ INSERT INTO `po` (`id`, `po_no`, `note`) VALUES
 
 CREATE TABLE `po_iteme` (
   `id` int(11) NOT NULL,
-  `po_iteme_no` varchar(10) NOT NULL,
+  `po_iteme_no` varchar(100) NOT NULL,
   `qte` double NOT NULL,
   `po_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- إرجاع أو استيراد بيانات الجدول `po_iteme`
---
-
-INSERT INTO `po_iteme` (`id`, `po_iteme_no`, `qte`, `po_id`) VALUES
-(24, '11', 200, 35),
-(25, '12', 200, 35),
-(26, '13', 400, 35);
 
 -- --------------------------------------------------------
 
@@ -125,7 +143,9 @@ INSERT INTO `tbcollege` (`CollegeID`, `CollegeName`) VALUES
 (2, 'كلية الطب'),
 (3, 'كلية الزراعة'),
 (4, 'كلية الهندسة'),
-(5, 'طب');
+(5, 'طب'),
+(6, 'اداب'),
+(7, '');
 
 -- --------------------------------------------------------
 
@@ -168,7 +188,10 @@ CREATE TABLE `tbemployee` (
 INSERT INTO `tbemployee` (`EmpID`, `EmpName`, `Lon`, `isopen`, `oldlon`, `oldisopen`) VALUES
 (26, 'مهند حامد', 1, 1, 0, 0),
 (27, 'محمد عبدالله', 1, 1, 0, 0),
-(28, 'عبدالسلام', 1, 1, 0, 0);
+(28, 'عبدالسلام', 1, 1, 0, 0),
+(29, 'جماع', 1, 1, 0, 0),
+(30, 'مهند مهند', 1, 1, 0, 0),
+(31, 'مهند مهند', 1, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -191,8 +214,8 @@ CREATE TABLE `tbfiltrate` (
 --
 
 INSERT INTO `tbfiltrate` (`FiltrID`, `LonID`, `TySectionID`, `ProcedureDate`, `Money`, `Archive`, `YearID`) VALUES
-(24, 40, 1, '2020-04-17 00:00:00.000', 700, NULL, NULL),
-(25, 40, 1, '2020-04-17 00:00:00.000', 50, NULL, NULL);
+(52, 47, 2, '2020-06-10 00:00:00.000', 500, 0, NULL),
+(53, 47, 2, '2020-05-06 00:00:00.000', 500, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -262,8 +285,15 @@ CREATE TABLE `tblon` (
 --
 
 INSERT INTO `tblon` (`LonID`, `LonDate`, `Maount`, `EmpID`, `TypeID`, `CollegeID`, `Note`, `Finish`, `Notes`, `CurrID`, `ProcedureDatfin`, `Archive`, `det`, `ID`, `UserID`) VALUES
-(39, '2020-04-17', 10000, 26, 1, 1, 'الغرض منها', 0, 'ملاحظات', 1, '0000-00-00 00:00:00.000', 0, 0, 0, 0),
-(40, '2020-04-18', 750, 27, 2, 4, 'تسيير العمل بالاداره', 0, 'تصديق الوكيل', 2, '0000-00-00 00:00:00.000', 0, 0, 0, 0);
+(47, '2020-06-18', 1000, 29, 2, 4, 'الغرض مناه', 1, 'ملاحظات', 1, '2020-06-13 09:06:25.000', 0, 3, 0, 0);
+
+--
+-- القوادح `tblon`
+--
+DELIMITER $$
+CREATE TRIGGER `LonID_tbfiltrate_delete` BEFORE DELETE ON `tblon` FOR EACH ROW DELETE FROM tbfiltrate WHERE tbfiltrate.LonID= OLD.LonID
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -288,6 +318,19 @@ CREATE TABLE `tbreport` (
   `Ty` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- إرجاع أو استيراد بيانات الجدول `tbreport`
+--
+
+INSERT INTO `tbreport` (`RepID`, `RepName`, `Ty`) VALUES
+(1, 'تتقرير يوضح تصفية العهد', 1),
+(2, 'تقرير في فترة معينة', 1),
+(3, 'تقرير في فترة معينة', 2),
+(4, 'تقرير يوضح صرف المستحقات', 2),
+(5, 'تقرير يوضح الاسماء الموقوفة عن الصرف', 2),
+(6, 'تقرير في شهر معين', 3),
+(7, 'تقريري في سنه معينه', 3);
+
 -- --------------------------------------------------------
 
 --
@@ -309,10 +352,17 @@ CREATE TABLE `tbreview` (
 
 CREATE TABLE `tbsecret` (
   `SecrtID` int(11) NOT NULL,
-  `PayDate` datetime(3) DEFAULT NULL,
   `PayID` int(11) NOT NULL,
+  `PayDate` datetime(3) DEFAULT NULL,
   `Notes` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- إرجاع أو استيراد بيانات الجدول `tbsecret`
+--
+
+INSERT INTO `tbsecret` (`SecrtID`, `PayID`, `PayDate`, `Notes`) VALUES
+(2, 1, '2020-06-01 00:00:00.000', NULL);
 
 -- --------------------------------------------------------
 
@@ -324,6 +374,14 @@ CREATE TABLE `tbsectemp` (
   `EmpReID` int(11) NOT NULL,
   `EmpNaRe` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- إرجاع أو استيراد بيانات الجدول `tbsectemp`
+--
+
+INSERT INTO `tbsectemp` (`EmpReID`, `EmpNaRe`) VALUES
+(1, 'الذين تم صرف مستحقاتهم'),
+(2, 'الذين لم يتم صرف مستحقاتهم');
 
 -- --------------------------------------------------------
 
@@ -344,7 +402,8 @@ INSERT INTO `tbsection` (`TySectionID`, `TySectionName`) VALUES
 (1, 'مواد نظافة'),
 (2, 'ضيافة وتكريم'),
 (3, 'تامين عربات'),
-(4, 'صيانة حدائق وممرات');
+(4, 'صيانة حدائق وممرات'),
+(5, '');
 
 -- --------------------------------------------------------
 
@@ -396,8 +455,9 @@ CREATE TABLE `tbyear` (
 --
 
 INSERT INTO `tbyear` (`YearID`, `YearName`) VALUES
-(1, '2013'),
-(2, '2014');
+(3, '2013'),
+(4, '2014'),
+(5, '2015');
 
 -- --------------------------------------------------------
 
@@ -409,6 +469,40 @@ CREATE TABLE `typename` (
   `typeID` int(11) NOT NULL,
   `typename` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- إرجاع أو استيراد بيانات الجدول `typename`
+--
+
+INSERT INTO `typename` (`typeID`, `typename`) VALUES
+(1, 'العهد'),
+(2, 'المرتجعات');
+
+-- --------------------------------------------------------
+
+--
+-- بنية الجدول `user`
+--
+
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL,
+  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `auth_key` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password_reset_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `status` smallint(6) NOT NULL DEFAULT '10',
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  `verification_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- إرجاع أو استيراد بيانات الجدول `user`
+--
+
+INSERT INTO `user` (`id`, `username`, `auth_key`, `password_hash`, `password_reset_token`, `email`, `status`, `created_at`, `updated_at`, `verification_token`) VALUES
+(2, 'مهند حامد', '82M7V0C_D3A5QHB0i-VygIKa7BTbOp36', '$2y$13$A5FbUO8isxJpd7hjmo3vUu5WfUdXJ7eAsDKldC6kClrQLEVQKhzUO', NULL, 'mahend161@gmail.com', 10, 315610537, 315610537, 'iaXuNU4-NEL0zVTnj9OiV_3GYYhnbrcE_315610537');
 
 --
 -- Indexes for dumped tables
@@ -469,9 +563,14 @@ ALTER TABLE `tbitem`
 -- Indexes for table `tblistreturn`
 --
 ALTER TABLE `tblistreturn`
-  ADD PRIMARY KEY (`RetID`,`PayID`),
+  ADD PRIMARY KEY (`RetID`),
   ADD KEY `EmpID` (`EmpID`,`ItemID`),
-  ADD KEY `ItemID` (`ItemID`);
+  ADD KEY `ItemID` (`ItemID`),
+  ADD KEY `EmpID_2` (`EmpID`),
+  ADD KEY `EmpID_3` (`EmpID`),
+  ADD KEY `ItemID_2` (`ItemID`),
+  ADD KEY `PayID` (`PayID`),
+  ADD KEY `EmpID_4` (`EmpID`);
 
 --
 -- Indexes for table `tblon`
@@ -481,7 +580,8 @@ ALTER TABLE `tblon`
   ADD KEY `EmpID` (`EmpID`,`TypeID`,`CollegeID`,`CurrID`),
   ADD KEY `TypeID` (`TypeID`),
   ADD KEY `CollegeID` (`CollegeID`),
-  ADD KEY `CurrID` (`CurrID`);
+  ADD KEY `CurrID` (`CurrID`),
+  ADD KEY `det` (`det`);
 
 --
 -- Indexes for table `tblonemp`
@@ -505,7 +605,8 @@ ALTER TABLE `tbreview`
 -- Indexes for table `tbsecret`
 --
 ALTER TABLE `tbsecret`
-  ADD PRIMARY KEY (`SecrtID`);
+  ADD PRIMARY KEY (`PayID`),
+  ADD KEY `SecrtID` (`SecrtID`);
 
 --
 -- Indexes for table `tbsectemp`
@@ -545,6 +646,15 @@ ALTER TABLE `typename`
   ADD UNIQUE KEY `typeID` (`typeID`);
 
 --
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `password_reset_token` (`password_reset_token`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -552,19 +662,19 @@ ALTER TABLE `typename`
 -- AUTO_INCREMENT for table `po`
 --
 ALTER TABLE `po`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `po_iteme`
 --
 ALTER TABLE `po_iteme`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbcollege`
 --
 ALTER TABLE `tbcollege`
-  MODIFY `CollegeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `CollegeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbcurrency`
@@ -576,13 +686,13 @@ ALTER TABLE `tbcurrency`
 -- AUTO_INCREMENT for table `tbemployee`
 --
 ALTER TABLE `tbemployee`
-  MODIFY `EmpID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `EmpID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `tbfiltrate`
 --
 ALTER TABLE `tbfiltrate`
-  MODIFY `FiltrID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `FiltrID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `tbitem`
@@ -600,7 +710,7 @@ ALTER TABLE `tblistreturn`
 -- AUTO_INCREMENT for table `tblon`
 --
 ALTER TABLE `tblon`
-  MODIFY `LonID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `LonID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `tblonemp`
@@ -612,7 +722,7 @@ ALTER TABLE `tblonemp`
 -- AUTO_INCREMENT for table `tbreport`
 --
 ALTER TABLE `tbreport`
-  MODIFY `RepID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `RepID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbreview`
@@ -624,19 +734,19 @@ ALTER TABLE `tbreview`
 -- AUTO_INCREMENT for table `tbsecret`
 --
 ALTER TABLE `tbsecret`
-  MODIFY `SecrtID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `SecrtID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbsectemp`
 --
 ALTER TABLE `tbsectemp`
-  MODIFY `EmpReID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `EmpReID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbsection`
 --
 ALTER TABLE `tbsection`
-  MODIFY `TySectionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `TySectionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbtypelan`
@@ -654,7 +764,13 @@ ALTER TABLE `tbuser`
 -- AUTO_INCREMENT for table `typename`
 --
 ALTER TABLE `typename`
-  MODIFY `typeID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `typeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- قيود الجداول المحفوظة
@@ -678,7 +794,8 @@ ALTER TABLE `tbfiltrate`
 --
 ALTER TABLE `tblistreturn`
   ADD CONSTRAINT `tblistreturn_ibfk_1` FOREIGN KEY (`ItemID`) REFERENCES `tbitem` (`ItemID`),
-  ADD CONSTRAINT `tblistreturn_ibfk_2` FOREIGN KEY (`EmpID`) REFERENCES `tbemployee` (`EmpID`);
+  ADD CONSTRAINT `tblistreturn_ibfk_2` FOREIGN KEY (`EmpID`) REFERENCES `tbemployee` (`EmpID`),
+  ADD CONSTRAINT `tblistreturn_ibfk_3` FOREIGN KEY (`PayID`) REFERENCES `tbsecret` (`PayID`);
 
 --
 -- القيود للجدول `tblon`
@@ -687,7 +804,8 @@ ALTER TABLE `tblon`
   ADD CONSTRAINT `tblon_ibfk_1` FOREIGN KEY (`EmpID`) REFERENCES `tbemployee` (`EmpID`),
   ADD CONSTRAINT `tblon_ibfk_2` FOREIGN KEY (`TypeID`) REFERENCES `tbtypelan` (`TypeID`),
   ADD CONSTRAINT `tblon_ibfk_3` FOREIGN KEY (`CollegeID`) REFERENCES `tbcollege` (`CollegeID`),
-  ADD CONSTRAINT `tblon_ibfk_4` FOREIGN KEY (`CurrID`) REFERENCES `tbcurrency` (`CurrID`);
+  ADD CONSTRAINT `tblon_ibfk_4` FOREIGN KEY (`CurrID`) REFERENCES `tbcurrency` (`CurrID`),
+  ADD CONSTRAINT `tblon_ibfk_5` FOREIGN KEY (`det`) REFERENCES `tbyear` (`YearID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

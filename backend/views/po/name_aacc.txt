@@ -1,0 +1,14 @@
+create trigger [dbo].[update_name 
+on [dbo].[customer] for update,insert
+as
+begin 
+
+UPDATE [dbo].[ACCOUNT]
+SET    [Name] =  i.NAME
+FROM   [dbo].[ACCOUNT]
+JOIN inserted I ON [dbo].[ACCOUNT].GUID = I.GUID_ACCOUNT 
+
+
+
+end
+

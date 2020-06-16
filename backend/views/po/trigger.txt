@@ -1,0 +1,17 @@
+USE [DB_ACC]
+GO
+/****** Object:  Trigger [dbo].[UPDATE_name]    Script Date: 5/9/2020 06:55:25 ã ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER TRIGGER [dbo].[UPDATE_name]
+on [dbo].[CUSTOMER] for update
+as
+begin
+UPDATE [dbo].[ACCOUNT]
+SET [NAME] = i.NAME
+from [dbo].[ACCOUNT] 
+JOIN  inserted  i ON dbo.ACCOUNT.GUID = i.GUID_ACCOUNT
+  
+end

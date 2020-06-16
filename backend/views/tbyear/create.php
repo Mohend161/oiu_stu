@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Tbyear */
 
-$this->title = 'Create Tbyear';
+$this->title = 'العام ';
 $this->params['breadcrumbs'][] = ['label' => 'Tbyears', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
